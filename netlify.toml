@@ -1,0 +1,20 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "api"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Redirect /api/* to Netlify serverless functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# React Router SPA catch-all redirect
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
