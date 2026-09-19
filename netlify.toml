@@ -2,7 +2,7 @@
   command = "npm run build"
   publish = "dist"
   functions = "api"
-  environment = { SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_ANON_KEY,VITE_SUPABASE_ANON_KEY" }
+  environment = { SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_ANON_KEY,VITE_SUPABASE_ANON_KEY,BREVO_SENDER_EMAIL,BREVO_SMTP_USER" }
 
 [functions]
   node_bundler = "esbuild"
@@ -18,4 +18,3 @@
   from = "/*"
   to = "/index.html"
   status = 200
-
