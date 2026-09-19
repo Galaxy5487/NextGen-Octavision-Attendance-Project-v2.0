@@ -2,6 +2,7 @@
   command = "npm run build"
   publish = "dist"
   functions = "api"
+  environment = { SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_ANON_KEY,VITE_SUPABASE_ANON_KEY" }
 
 [functions]
   node_bundler = "esbuild"
