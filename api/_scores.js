@@ -131,7 +131,11 @@ export function warningEmail(empName, dateStr, score, counts) {
 export async function trySendEmail(to, subject, text) {
   const key = process.env.BREVO_API_KEY;
   if (!key) return 'logged';
-  const senderEmail = process.env.BREVO_SENDER_EMAIL || 'octavisionteam@gmail.com';
+  const senderEmail = process.env.BREVO_SENDER_EMAIL;
+  if (!senderEmail) {
+    console.error('email send skipped: BREVO_SENDER_EMAIL is not configured');
+    return 'logged';
+  }
   const smtpUser = process.env.BREVO_SMTP_USER || senderEmail;
   const logoUrl = 'https://nextgen-octavision.netlify.app/logo.png';
   const safe = String(text || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -192,4 +196,3 @@ export async function trySendEmail(to, subject, text) {
     return 'logged';
   }
 }
-
