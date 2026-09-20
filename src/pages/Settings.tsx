@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Settings as SettingsIcon, Camera, Trash2, CheckCircle2, Save, Lock, User as UserIcon, Loader2 } from 'lucide-react';
+import { Settings as SettingsIcon, Camera, Trash2, CheckCircle2, Save, Lock, User as UserIcon, Loader2, Sun, Moon, Palette, Check } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme, THEME_PALETTES } from '../contexts/ThemeContext';
 import { api } from '../lib/api';
 import UserAvatar from '../components/UserAvatar';
 
 export default function Settings() {
   const { user, refresh } = useAuth();
+  const { mode, setMode, palette, setPalette } = useTheme();
   const isHead = user?.role === 'head';
   const [name, setName] = useState('');
   const [designation, setDesignation] = useState('');
@@ -85,14 +87,14 @@ export default function Settings() {
   };
 
   return (
-    <div className="space-y-5 max-w-3xl">
+    <div className="space-y-6 max-w-4xl">
       <div>
         <h1 className="font-display text-2xl font-extrabold tracking-tight flex items-center gap-2"><SettingsIcon size={24} /> Profile Settings</h1>
-        <p className="text-sm text-zinc-500">Manage your name, password and profile picture.</p>
+        <p className="text-sm text-zinc-500">Manage your profile, theme mode, color palettes and account security.</p>
       </div>
 
       {/* Photo card */}
-      <div className="bg-zinc-950 text-white rounded-3xl p-5 sm:p-7 relative overflow-hidden">
+      <div className="bg-zinc-950 text-white rounded-3xl p-5 sm:p-7 relative overflow-hidden shadow-xl border border-zinc-800">
         <div className="absolute inset-0 login-grid-bg opacity-50" />
         <div className="relative flex flex-col sm:flex-row items-center gap-5">
           <div className="relative">
@@ -109,7 +111,6 @@ export default function Settings() {
             <p className="text-xs text-zinc-500 mt-1">{isHead ? '👑 Team Head' : `👤 ${user.designation || 'Employee'}`} · PNG / JPG / WEBP · max 2MB</p>
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
-            
             <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
             <button onClick={() => fileRef.current?.click()} disabled={photoBusy} className="flex-1 sm:flex-none flex items-center justify-center gap-2 rounded-xl bg-white text-zinc-900 text-sm font-bold px-4 py-2.5 hover:bg-zinc-200 disabled:opacity-60 min-h-[44px]">
               <Camera size={16} /> {user.avatar_url ? 'Change' : 'Upload'}
@@ -123,8 +124,91 @@ export default function Settings() {
         </div>
       </div>
 
+      {/* Appearance & Theme Customization */}
+      <div className="bg-white rounded-3xl border border-zinc-200 p-5 sm:p-7 shadow-sm space-y-5">
+        <div>
+          <h2 className="font-display font-extrabold text-lg flex items-center gap-2">
+            <Palette size={20} className="text-amber-500" /> Appearance & Theme Customization
+          </h2>
+          <p className="text-xs text-zinc-500 mt-0.5">Switch between Light / Dark themes and select your favorite accent color palette.</p>
+        </div>
+
+        {/* Theme Mode Toggle (Light / Dark) */}
+        <div>
+          <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-2.5">Theme Mode</label>
+          <div className="grid grid-cols-2 gap-3 max-w-md">
+            <button
+              type="button"
+              onClick={() => setMode('light')}
+              className={`flex items-center gap-3 rounded-2xl p-4 border text-left transition-all ${
+                mode === 'light'
+                  ? 'border-zinc-900 bg-zinc-900 text-white shadow-md ring-2 ring-zinc-900/20'
+                  : 'border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-300'
+              }`}
+            >
+              <div className={`p-2.5 rounded-xl ${mode === 'light' ? 'bg-amber-400 text-zinc-950' : 'bg-white text-zinc-600 border border-zinc-200'}`}>
+                <Sun size={20} />
+              </div>
+              <div>
+                <p className="font-bold text-sm">Light Mode</p>
+                <p className={`text-[11px] ${mode === 'light' ? 'text-zinc-300' : 'text-zinc-500'}`}>Clean & bright layout</p>
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMode('dark')}
+              className={`flex items-center gap-3 rounded-2xl p-4 border text-left transition-all ${
+                mode === 'dark'
+                  ? 'border-zinc-100 bg-zinc-900 text-white shadow-md ring-2 ring-zinc-100/20'
+                  : 'border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-300'
+              }`}
+            >
+              <div className={`p-2.5 rounded-xl ${mode === 'dark' ? 'bg-indigo-500 text-white' : 'bg-zinc-800 text-zinc-300'}`}>
+                <Moon size={20} />
+              </div>
+              <div>
+                <p className="font-bold text-sm">Dark Mode</p>
+                <p className={`text-[11px] ${mode === 'dark' ? 'text-zinc-300' : 'text-zinc-500'}`}>Sleek night theme</p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Color Palette Presets */}
+        <div>
+          <label className="text-xs font-bold text-zinc-500 uppercase tracking-wider block mb-2.5">Accent Color Palettes</label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {THEME_PALETTES.map((p) => {
+              const active = palette === p.id;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setPalette(p.id)}
+                  className={`relative flex flex-col justify-between p-3.5 rounded-2xl border transition-all text-left ${
+                    active
+                      ? 'border-zinc-900 bg-zinc-950 text-white shadow-md ring-2 ring-zinc-900/30'
+                      : 'border-zinc-200 bg-zinc-50 hover:bg-zinc-100 text-zinc-800'
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span className={`h-6 w-6 rounded-full bg-gradient-to-r ${p.previewClass} ring-2 ring-white/40 shadow-sm`} />
+                    {active && <Check size={16} className="text-emerald-400 font-bold" />}
+                  </div>
+                  <div>
+                    <p className="font-bold text-xs">{p.name}</p>
+                    <p className={`text-[10px] mt-0.5 ${active ? 'text-zinc-400' : 'text-zinc-500'}`}>{p.id.toUpperCase()} Theme</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* Name / details */}
-      <form onSubmit={saveProfile} className="bg-white rounded-2xl border border-zinc-200 p-5 sm:p-6 shadow-sm space-y-4">
+      <form onSubmit={saveProfile} className="bg-white rounded-3xl border border-zinc-200 p-5 sm:p-7 shadow-sm space-y-4">
         <h2 className="font-display font-extrabold text-lg flex items-center gap-2"><UserIcon size={19} /> Personal Details</h2>
         {msg && (
           <p className={`text-sm font-semibold rounded-xl px-4 py-3 border flex items-center gap-2 ${msg.ok ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-red-600 bg-red-50 border-red-200'}`}>
@@ -155,7 +239,7 @@ export default function Settings() {
       </form>
 
       {/* Password */}
-      <form onSubmit={changePassword} className="bg-white rounded-2xl border border-zinc-200 p-5 sm:p-6 shadow-sm space-y-4">
+      <form onSubmit={changePassword} className="bg-white rounded-3xl border border-zinc-200 p-5 sm:p-7 shadow-sm space-y-4">
         <h2 className="font-display font-extrabold text-lg flex items-center gap-2"><Lock size={19} /> Change Password</h2>
         {pwMsg && (
           <p className={`text-sm font-semibold rounded-xl px-4 py-3 border flex items-center gap-2 ${pwMsg.ok ? 'text-emerald-700 bg-emerald-50 border-emerald-200' : 'text-red-600 bg-red-50 border-red-200'}`}>

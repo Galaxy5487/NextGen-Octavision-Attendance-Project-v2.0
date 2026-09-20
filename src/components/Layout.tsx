@@ -3,13 +3,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, CalendarCheck2, CalendarDays, Megaphone, MessagesSquare,
-  ClipboardList, Plane, MailWarning, Users, Bell, LogOut, Menu, X, CheckCheck, Settings as SettingsIcon, Trash2,
+  ClipboardList, Plane, MailWarning, Users, Bell, LogOut, Menu, X, CheckCheck, Settings as SettingsIcon, Trash2, Sun, Moon,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import type { Notif } from '../lib/types';
-import UserAvatar from './UserAvatar';
+import UserAvatar from '../components/UserAvatar';
 import { api } from '../lib/api';
-
 
 const NAV = [
   { to: '/app', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -32,6 +32,7 @@ const KIND_ICON: Record<string, string> = {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
+  const { mode, toggleMode } = useTheme();
   const loc = useLocation();
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
@@ -83,12 +84,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   });
 
   const sidebar = (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800">
       <Link to="/app" className="flex items-center gap-3 px-5 pt-6 pb-5" onClick={() => setOpen(false)}>
-        <img src="/logo.png" alt="NextGen Octavision" className="h-11 w-11 rounded-xl object-cover bg-white shadow-sm ring-1 ring-zinc-200" />
+        <img src="/logo.png" alt="NextGen Octavision" className="h-11 w-11 rounded-xl object-cover bg-white shadow-sm ring-1 ring-zinc-200 dark:ring-zinc-700" />
         <div>
-          <p className="font-display font-extrabold text-[15px] leading-tight tracking-tight">NextGen Octavision</p>
-          <p className="text-[10px] tracking-[0.18em] text-zinc-500 font-semibold">CREATE – INNOVATE – EVOLVE</p>
+          <p className="font-display font-extrabold text-[15px] leading-tight tracking-tight text-zinc-900 dark:text-white">NextGen Octavision</p>
+          <p className="text-[10px] tracking-[0.18em] text-zinc-500 font-semibold dark:text-zinc-400">CREATE – INNOVATE – EVOLVE</p>
         </div>
       </Link>
       <nav className="flex-1 overflow-y-auto px-3 pb-3 space-y-1 scroll-thin">
@@ -97,7 +98,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           const Icon = i.icon;
           return (
             <Link key={i.to + i.label} to={i.to} onClick={() => setOpen(false)}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${active ? 'bg-zinc-900 text-white shadow-md' : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900'}`}>
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all ${active ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 shadow-md' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white'}`}>
               <Icon size={18} strokeWidth={2.2} />
               {i.label === 'Tasks' && isHead ? 'Tasks (Assign)' : i.label}
               {i.to === '/app/chat' && <span className="ml-auto" />}
@@ -105,18 +106,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           );
         })}
       </nav>
-      <div className="p-3 border-t border-zinc-200">
-        <div className="flex items-center gap-3 rounded-xl bg-zinc-100 p-3">
+      <div className="p-3 border-t border-zinc-200 dark:border-zinc-800">
+        <div className="flex items-center gap-3 rounded-xl bg-zinc-100 dark:bg-zinc-800/80 p-3">
           <Link to="/app/settings" onClick={() => setOpen(false)} title="Profile Settings">
             <UserAvatar p={user} size="h-10 w-10 text-sm" />
           </Link>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold truncate">{user?.full_name}</p>
-            <Link to="/app/settings" onClick={() => setOpen(false)} className="text-xs text-zinc-500 hover:text-zinc-900 truncate block">
+            <p className="text-sm font-bold truncate text-zinc-900 dark:text-white">{user?.full_name}</p>
+            <Link to="/app/settings" onClick={() => setOpen(false)} className="text-xs text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white truncate block">
               {isHead ? 'Team Head' : user?.designation} · Settings
             </Link>
           </div>
-          <button onClick={() => logout()} title="Sign out" className="p-2 rounded-lg text-zinc-500 hover:text-red-600 hover:bg-red-50 transition">
+          <button onClick={() => logout()} title="Sign out" className="p-2 rounded-lg text-zinc-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 transition">
             <LogOut size={18} />
           </button>
         </div>
@@ -125,18 +126,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
-      <aside className="hidden lg:flex fixed inset-y-0 left-0 w-72 bg-white border-r border-zinc-200 flex-col z-30">
+    <div className="min-h-screen bg-[#fafafa] dark:bg-[#09090b] text-zinc-900 dark:text-zinc-100 transition-colors duration-200">
+      <aside className="hidden lg:flex fixed inset-y-0 left-0 w-72 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex-col z-30">
         {sidebar}
       </aside>
 
       <AnimatePresence>
         {open && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="fixed inset-0 bg-black/40 z-40 lg:hidden" />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setOpen(false)} className="fixed inset-0 bg-black/50 z-40 lg:hidden" />
             <motion.aside initial={{ x: -300 }} animate={{ x: 0 }} exit={{ x: -300 }} transition={{ type: 'spring', damping: 28 }}
-              className="fixed inset-y-0 left-0 w-[84vw] max-w-[300px] bg-white z-50 lg:hidden shadow-2xl">
-              <button onClick={() => setOpen(false)} className="absolute top-4 right-4 p-2 rounded-lg hover:bg-zinc-100"><X size={20} /></button>
+              className="fixed inset-y-0 left-0 w-[84vw] max-w-[300px] bg-white dark:bg-zinc-900 z-50 lg:hidden shadow-2xl">
+              <button onClick={() => setOpen(false)} className="absolute top-4 right-4 p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"><X size={20} /></button>
               {sidebar}
             </motion.aside>
           </>
@@ -144,23 +145,31 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </AnimatePresence>
 
       <div className="lg:pl-72">
-        <header className="sticky top-0 z-20 bg-white/85 backdrop-blur border-b border-zinc-200">
+        <header className="sticky top-0 z-20 bg-white/85 dark:bg-zinc-900/85 backdrop-blur border-b border-zinc-200 dark:border-zinc-800">
           <div className="flex items-center gap-3 px-4 sm:px-8 h-16">
-            <button onClick={() => setOpen(true)} className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-zinc-100"><Menu size={22} /></button>
+            <button onClick={() => setOpen(true)} className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"><Menu size={22} /></button>
             <div className="flex items-center gap-2 lg:hidden">
-              <img src="/logo.png" alt="" className="h-8 w-8 rounded-lg object-cover ring-1 ring-zinc-200" />
+              <img src="/logo.png" alt="" className="h-8 w-8 rounded-lg object-cover ring-1 ring-zinc-200 dark:ring-zinc-700" />
               <span className="font-display font-extrabold text-sm">NextGen Octavision</span>
             </div>
             <div className="hidden lg:block">
-              <p className="text-xs text-zinc-500 font-medium">{new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">{new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
               <p className="font-display font-bold text-lg leading-tight">Welcome, {user?.full_name?.split(' ')[0]}</p>
             </div>
             <div className="ml-auto flex items-center gap-2">
-              <span className={`hidden sm:inline-flex text-[11px] font-bold px-2.5 py-1 rounded-full ${isHead ? 'bg-zinc-900 text-white' : 'bg-zinc-100 text-zinc-700'}`}>
+              <button
+                onClick={toggleMode}
+                title={mode === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                className="p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 transition"
+              >
+                {mode === 'dark' ? <Sun size={19} className="text-amber-400" /> : <Moon size={19} />}
+              </button>
+
+              <span className={`hidden sm:inline-flex text-[11px] font-bold px-2.5 py-1 rounded-full ${isHead ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900' : 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'}`}>
                 {isHead ? '👑 TEAM HEAD' : '👤 EMPLOYEE'}
               </span>
               <div className="relative">
-                <button onClick={() => setShowNotif((s) => !s)} className="relative p-2.5 rounded-xl hover:bg-zinc-100 transition">
+                <button onClick={() => setShowNotif((s) => !s)} className="relative p-2.5 rounded-xl hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
                   <Bell size={20} />
                   {unread > 0 && (
                     <span className="absolute -top-0.5 -right-0.5 min-w-5 h-5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">{unread}</span>
@@ -170,9 +179,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <AnimatePresence>
                   {showNotif && (
                     <motion.div initial={{ opacity: 0, y: 8, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                      className="fixed left-3 right-3 top-[68px] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[350px] bg-white rounded-2xl shadow-2xl border border-zinc-200 overflow-hidden z-50">
-                      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100">
+                      className="fixed left-3 right-3 top-[68px] sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-[350px] bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-zinc-200 dark:border-zinc-800 overflow-hidden z-50">
+                      <div className="flex items-center justify-between px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
                         <p className="font-bold text-sm">Notifications & Reminders</p>
+
                         <div className="flex items-center gap-2">
                           {notifs.some((n) => !n.read) && (
                             <button onClick={markAll} title="Mark all read" className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 flex items-center gap-1">

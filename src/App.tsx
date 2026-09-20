@@ -1,5 +1,6 @@
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -30,24 +31,27 @@ function Guard({ children, head }: { children: React.ReactNode; head?: boolean }
 
 export default function App() {
   return (
-    <AuthProvider>
-      <HashRouter>
-        <Routes>
-          <Route path="/app" element={<Guard><Dashboard /></Guard>} />
-          <Route path="/app/sheet" element={<Guard><Sheet /></Guard>} />
-          <Route path="/app/mark" element={<Guard head><Mark /></Guard>} />
-          <Route path="/app/scores" element={<Guard head><Scores /></Guard>} />
-          <Route path="/app/calendar" element={<Guard><Calendar /></Guard>} />
-          <Route path="/app/announcements" element={<Guard><Announcements /></Guard>} />
-          <Route path="/app/chat" element={<Guard><Chat /></Guard>} />
-          <Route path="/app/tasks" element={<Guard><Tasks /></Guard>} />
-          <Route path="/app/leaves" element={<Guard><Leaves /></Guard>} />
-          <Route path="/app/warnings" element={<Guard><Warnings /></Guard>} />
-          <Route path="/app/team" element={<Guard head><Team /></Guard>} />
-          <Route path="/app/settings" element={<Guard><Settings /></Guard>} />
-          <Route path="*" element={<Navigate to="/app" replace />} />
-        </Routes>
-      </HashRouter>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <HashRouter>
+          <Routes>
+            <Route path="/app" element={<Guard><Dashboard /></Guard>} />
+            <Route path="/app/sheet" element={<Guard><Sheet /></Guard>} />
+            <Route path="/app/mark" element={<Guard head><Mark /></Guard>} />
+            <Route path="/app/scores" element={<Guard head><Scores /></Guard>} />
+            <Route path="/app/calendar" element={<Guard><Calendar /></Guard>} />
+            <Route path="/app/announcements" element={<Guard><Announcements /></Guard>} />
+            <Route path="/app/chat" element={<Guard><Chat /></Guard>} />
+            <Route path="/app/tasks" element={<Guard><Tasks /></Guard>} />
+            <Route path="/app/leaves" element={<Guard><Leaves /></Guard>} />
+            <Route path="/app/warnings" element={<Guard><Warnings /></Guard>} />
+            <Route path="/app/team" element={<Guard head><Team /></Guard>} />
+            <Route path="/app/settings" element={<Guard><Settings /></Guard>} />
+            <Route path="*" element={<Navigate to="/app" replace />} />
+          </Routes>
+        </HashRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
+
