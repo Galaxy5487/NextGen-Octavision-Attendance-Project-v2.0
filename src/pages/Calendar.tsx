@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Plus, Megaphone, Briefcase, Palmtree, Trash2
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 import { monthStrOf, shiftMonth, monthLabel, pad, type CalendarOverride } from '../lib/types';
-import { getEventsForDate, getEventsForMonth, type CalendarEvent } from '../lib/holidays';
+import { getEventsForDate, getEventsForMonth } from '../lib/holidays';
 
 const DOW = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -109,17 +109,17 @@ export default function Calendar() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
         <div>
-          <h1 className="font-display text-xl sm:text-2xl font-extrabold tracking-tight flex items-center gap-2">
-            <CalendarIcon size={24} className="text-zinc-900" /> Agency Calendar & Celebrations
+          <h1 className="font-display text-xl sm:text-2xl font-extrabold tracking-tight flex items-center gap-2 text-zinc-900 dark:text-white">
+            <CalendarIcon size={24} className="text-zinc-900 dark:text-zinc-100" /> Agency Calendar & Celebrations
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 mt-0.5">
             Auto-synced real calendar events, national holidays, celebrations & agency attendance controls.
           </p>
         </div>
-        <div className="sm:ml-auto flex items-center rounded-2xl border border-zinc-200 bg-white shadow-sm overflow-hidden w-full sm:w-auto">
+        <div className="sm:ml-auto flex items-center rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white shadow-sm overflow-hidden w-full sm:w-auto">
           <button
             onClick={() => setMonth(shiftMonth(month, -1))}
-            className="p-3 hover:bg-zinc-100 min-w-[44px] min-h-[44px] flex items-center justify-center transition"
+            className="p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 min-w-[44px] min-h-[44px] flex items-center justify-center transition"
           >
             <ChevronLeft size={18} />
           </button>
@@ -128,7 +128,7 @@ export default function Calendar() {
           </span>
           <button
             onClick={() => setMonth(shiftMonth(month, 1))}
-            className="p-3 hover:bg-zinc-100 min-w-[44px] min-h-[44px] flex items-center justify-center transition"
+            className="p-3 hover:bg-zinc-100 dark:hover:bg-zinc-800 min-w-[44px] min-h-[44px] flex items-center justify-center transition"
           >
             <ChevronRight size={18} />
           </button>
@@ -136,7 +136,7 @@ export default function Calendar() {
       </div>
 
       {msg && (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 text-emerald-800 text-sm font-semibold px-4 py-3 flex items-center gap-2 shadow-sm">
+        <div className="rounded-2xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-sm font-semibold px-4 py-3 flex items-center gap-2 shadow-sm">
           <CheckCircle2 size={16} />
           {msg}
         </div>
@@ -148,8 +148,8 @@ export default function Calendar() {
           onClick={() => setCategoryFilter('all')}
           className={`px-3.5 py-1.5 rounded-full border transition ${
             categoryFilter === 'all'
-              ? 'bg-zinc-900 text-white border-zinc-900'
-              : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50'
+              ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-zinc-100'
+              : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800'
           }`}
         >
           ✨ All Events ({monthEvents.length})
@@ -159,7 +159,7 @@ export default function Calendar() {
           className={`px-3.5 py-1.5 rounded-full border transition ${
             categoryFilter === 'holiday'
               ? 'bg-red-600 text-white border-red-600'
-              : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50'
+              : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800'
           }`}
         >
           🇮🇳 National Holidays
@@ -169,12 +169,12 @@ export default function Calendar() {
           className={`px-3.5 py-1.5 rounded-full border transition ${
             categoryFilter === 'festival'
               ? 'bg-amber-500 text-white border-amber-500'
-              : 'bg-white text-zinc-700 border-zinc-200 hover:bg-zinc-50'
+              : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800'
           }`}
         >
           🪔 Festivals & Celebrations
         </button>
-        <span className="ml-auto text-[11px] text-zinc-500 font-medium hidden md:inline">
+        <span className="ml-auto text-[11px] text-zinc-500 dark:text-zinc-400 font-medium hidden md:inline">
           Click any day to view details {isHead ? 'or announce office leaves' : ''}
         </span>
       </div>
@@ -182,8 +182,8 @@ export default function Calendar() {
       {/* Main Grid & Monthly Sidebar Layout */}
       <div className="grid lg:grid-cols-[1fr_320px] gap-6 items-start">
         {/* Calendar Grid */}
-        <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
-          <div className="grid grid-cols-7 bg-zinc-950 text-white text-center text-[11px] sm:text-xs font-extrabold tracking-wider">
+        <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <div className="grid grid-cols-7 bg-zinc-950 dark:bg-zinc-950 text-white text-center text-[11px] sm:text-xs font-extrabold tracking-wider">
             {DOW.map((d) => (
               <div key={d} className="py-3 sm:py-3.5">
                 {d}
@@ -193,14 +193,14 @@ export default function Calendar() {
 
           {loading ? (
             <div className="flex justify-center py-24">
-              <div className="animate-spin h-8 w-8 rounded-full border-4 border-zinc-200 border-t-zinc-900" />
+              <div className="animate-spin h-8 w-8 rounded-full border-4 border-zinc-200 border-t-zinc-900 dark:border-zinc-800 dark:border-t-zinc-100" />
             </div>
           ) : (
-            <div className="grid grid-cols-7 gap-px bg-zinc-200/70">
+            <div className="grid grid-cols-7 gap-px bg-zinc-200/70 dark:bg-zinc-800/70">
               {cells.map((ds, i) => {
                 if (!ds)
                   return (
-                    <div key={'e' + i} className="bg-zinc-50/40 min-h-[72px] sm:min-h-[105px]" />
+                    <div key={'e' + i} className="bg-zinc-50/40 dark:bg-zinc-900/40 min-h-[72px] sm:min-h-[105px]" />
                   );
 
                 const [yy, mm, dd] = ds.split('-').map(Number);
@@ -216,15 +216,15 @@ export default function Calendar() {
                   <div
                     key={ds}
                     onClick={() => openDayModal(ds)}
-                    className={`relative bg-white min-h-[72px] sm:min-h-[105px] p-1.5 sm:p-2.5 transition cursor-pointer hover:bg-zinc-50/90 ${
-                      isToday ? 'ring-2 ring-inset ring-zinc-900 bg-zinc-50/50' : ''
+                    className={`relative bg-white dark:bg-zinc-900 min-h-[72px] sm:min-h-[105px] p-1.5 sm:p-2.5 transition cursor-pointer hover:bg-zinc-50/90 dark:hover:bg-zinc-800/80 ${
+                      isToday ? 'ring-2 ring-inset ring-zinc-900 dark:ring-zinc-100 bg-zinc-50/50 dark:bg-zinc-800/50' : ''
                     } ${
                       isLeave
-                        ? 'bg-violet-50/80'
+                        ? 'bg-violet-50/80 dark:bg-violet-950/30'
                         : sundayOff
-                        ? 'bg-zinc-50/80'
+                        ? 'bg-zinc-50/80 dark:bg-zinc-950/40'
                         : isWorkSun
-                        ? 'bg-amber-50/80'
+                        ? 'bg-amber-50/80 dark:bg-amber-950/30'
                         : ''
                     }`}
                   >
@@ -232,10 +232,10 @@ export default function Calendar() {
                       <span
                         className={`text-xs sm:text-sm font-extrabold w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center ${
                           isToday
-                            ? 'bg-zinc-900 text-white shadow-sm'
+                            ? 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-sm'
                             : dow === 0
-                            ? 'text-red-500'
-                            : 'text-zinc-800'
+                            ? 'text-red-500 dark:text-red-400'
+                            : 'text-zinc-800 dark:text-zinc-200'
                         }`}
                       >
                         {dd}
@@ -246,13 +246,13 @@ export default function Calendar() {
                         {realEvents.length > 0 && (
                           <span
                             title={realEvents.map((r) => r.title).join(', ')}
-                            className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200/60 shrink-0"
+                            className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60 shrink-0"
                           >
                             {realEvents[0].icon}
                           </span>
                         )}
                         {isHead && !ov && (
-                          <Plus size={13} className="text-zinc-300 opacity-0 group-hover:opacity-100" />
+                          <Plus size={13} className="text-zinc-300 dark:text-zinc-600 opacity-0 group-hover:opacity-100" />
                         )}
                       </div>
                     </div>
@@ -265,10 +265,10 @@ export default function Calendar() {
                           key={idx}
                           className={`text-[9px] sm:text-[10px] font-extrabold truncate px-1.5 py-0.5 rounded-md leading-tight ${
                             re.isNationalHoliday
-                              ? 'bg-red-50 text-red-700 border border-red-200/50'
+                              ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200/50 dark:border-red-900/50'
                               : re.category === 'festival'
-                              ? 'bg-amber-50 text-amber-800 border border-amber-200/50'
-                              : 'bg-zinc-100 text-zinc-700 border border-zinc-200/50'
+                              ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200/50 dark:border-amber-900/50'
+                              : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/50 dark:border-zinc-700/50'
                           }`}
                         >
                           {re.icon} {re.title}
@@ -277,17 +277,17 @@ export default function Calendar() {
 
                       {/* Agency Overrides */}
                       {isLeave && (
-                        <p className="text-[9px] sm:text-[10px] font-extrabold text-violet-700 bg-violet-100/70 border border-violet-200 px-1.5 py-0.5 rounded-md truncate leading-tight">
+                        <p className="text-[9px] sm:text-[10px] font-extrabold text-violet-700 dark:text-violet-300 bg-violet-100/70 dark:bg-violet-950/60 border border-violet-200 dark:border-violet-900 px-1.5 py-0.5 rounded-md truncate leading-tight">
                           🏖️ {ov.label || 'Office leave'}
                         </p>
                       )}
                       {isWorkSun && (
-                        <p className="text-[9px] sm:text-[10px] font-extrabold text-amber-800 bg-amber-100/70 border border-amber-200 px-1.5 py-0.5 rounded-md truncate leading-tight">
+                        <p className="text-[9px] sm:text-[10px] font-extrabold text-amber-800 dark:text-amber-300 bg-amber-100/70 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-900 px-1.5 py-0.5 rounded-md truncate leading-tight">
                           💼 {ov.label || 'Working Sunday'}
                         </p>
                       )}
                       {sundayOff && !ov && (
-                        <p className="text-[9px] sm:text-[10px] font-bold text-zinc-400">
+                        <p className="text-[9px] sm:text-[10px] font-bold text-zinc-400 dark:text-zinc-500">
                           ⛱️ Sunday
                         </p>
                       )}
@@ -300,19 +300,19 @@ export default function Calendar() {
         </div>
 
         {/* Monthly Celebrations Sidebar */}
-        <div className="bg-white rounded-3xl border border-zinc-200 p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+        <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 p-5 shadow-sm space-y-4 text-zinc-900 dark:text-white">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
             <h3 className="font-display font-extrabold text-base flex items-center gap-2">
               <Sparkles size={18} className="text-amber-500" /> Celebrations in {monthLabel(month).split(' ')[0]}
             </h3>
-            <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-zinc-100 text-zinc-700">
+            <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
               {filteredMonthEvents.length}
             </span>
           </div>
 
           <div className="space-y-2.5 max-h-[480px] overflow-y-auto scroll-thin pr-1">
             {filteredMonthEvents.length === 0 ? (
-              <p className="text-xs text-zinc-500 text-center py-8">
+              <p className="text-xs text-zinc-500 dark:text-zinc-400 text-center py-8">
                 No major celebrations scheduled for this month.
               </p>
             ) : (
@@ -325,25 +325,25 @@ export default function Calendar() {
                   <div
                     key={dateStr + idx}
                     onClick={() => openDayModal(dateStr)}
-                    className="p-3 rounded-2xl border border-zinc-100 bg-zinc-50/50 hover:bg-zinc-100/80 transition cursor-pointer flex items-start gap-3"
+                    className="p-3 rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/40 hover:bg-zinc-100/80 dark:hover:bg-zinc-800/80 transition cursor-pointer flex items-start gap-3"
                   >
-                    <div className="h-10 w-10 rounded-xl bg-white border border-zinc-200 flex flex-col items-center justify-center shrink-0 shadow-xs">
-                      <span className="text-[9px] font-bold text-zinc-400 uppercase leading-none">
+                    <div className="h-10 w-10 rounded-xl bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex flex-col items-center justify-center shrink-0 shadow-xs">
+                      <span className="text-[9px] font-bold text-zinc-400 dark:text-zinc-500 uppercase leading-none">
                         {dayName}
                       </span>
-                      <span className="text-sm font-extrabold text-zinc-900 leading-tight">
+                      <span className="text-sm font-extrabold text-zinc-900 dark:text-white leading-tight">
                         {dd}
                       </span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-extrabold text-zinc-900 truncate flex items-center gap-1.5">
+                      <p className="text-xs font-extrabold text-zinc-900 dark:text-white truncate flex items-center gap-1.5">
                         <span>{event.icon}</span> {event.title}
                       </p>
-                      <p className="text-[10px] text-zinc-500 mt-0.5 line-clamp-1">
+                      <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-0.5 line-clamp-1">
                         {event.description || event.category}
                       </p>
                       {event.isNationalHoliday && (
-                        <span className="inline-block text-[9px] font-bold px-1.5 py-0.2 rounded bg-red-100 text-red-700 mt-1">
+                        <span className="inline-block text-[9px] font-bold px-1.5 py-0.2 rounded bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 mt-1">
                           National Holiday
                         </span>
                       )}
@@ -364,11 +364,11 @@ export default function Calendar() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-white rounded-3xl p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto scroll-thin"
+            className="w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl p-6 shadow-2xl border border-zinc-200 dark:border-zinc-800 space-y-4 max-h-[90vh] overflow-y-auto scroll-thin text-zinc-900 dark:text-white"
           >
-            <div className="flex items-center justify-between border-b border-zinc-100 pb-3">
+            <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
               <div>
-                <span className="text-xs font-extrabold text-zinc-400 uppercase tracking-wider">
+                <span className="text-xs font-extrabold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider">
                   Day Details
                 </span>
                 <h3 className="font-display font-extrabold text-lg">
@@ -387,7 +387,7 @@ export default function Calendar() {
               <button
                 type="button"
                 onClick={() => setSelectedDay(null)}
-                className="px-3 py-1.5 rounded-xl border border-zinc-200 text-xs font-bold hover:bg-zinc-100"
+                className="px-3 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-700 text-xs font-bold hover:bg-zinc-100 dark:hover:bg-zinc-800"
               >
                 Close
               </button>
@@ -396,15 +396,15 @@ export default function Calendar() {
             {/* Real Celebrations List */}
             {selectedDayEvents.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-extrabold text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+                <p className="text-xs font-extrabold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
                   <Sparkles size={14} className="text-amber-500" /> Real Calendar Events & Celebrations
                 </p>
                 {selectedDayEvents.map((ev, idx) => (
                   <div
                     key={idx}
-                    className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200/80 space-y-1"
+                    className="p-3.5 rounded-2xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200/80 dark:border-amber-900/60 space-y-1"
                   >
-                    <p className="text-sm font-extrabold text-amber-950 flex items-center gap-2">
+                    <p className="text-sm font-extrabold text-amber-950 dark:text-amber-200 flex items-center gap-2">
                       <span className="text-lg">{ev.icon}</span> {ev.title}
                       {ev.isNationalHoliday && (
                         <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-red-500 text-white">
@@ -413,7 +413,7 @@ export default function Calendar() {
                       )}
                     </p>
                     {ev.description && (
-                      <p className="text-xs text-amber-900/80 leading-relaxed">{ev.description}</p>
+                      <p className="text-xs text-amber-900/80 dark:text-amber-300/80 leading-relaxed">{ev.description}</p>
                     )}
                   </div>
                 ))}
@@ -421,13 +421,13 @@ export default function Calendar() {
             )}
 
             {/* Agency Status */}
-            <div className="p-3.5 rounded-2xl bg-zinc-50 border border-zinc-200 space-y-1.5">
-              <p className="text-xs font-extrabold text-zinc-500 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 space-y-1.5">
+              <p className="text-xs font-extrabold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
                 <Info size={14} /> Agency Status
               </p>
               {selectedDayOverride ? (
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-extrabold text-zinc-900">
+                  <p className="text-sm font-extrabold text-zinc-900 dark:text-white">
                     {selectedDayOverride.kind === 'leave_day'
                       ? `🏖️ ${selectedDayOverride.label || 'Office Leave'}`
                       : `💼 ${selectedDayOverride.label || 'Working Sunday'}`}
@@ -435,14 +435,14 @@ export default function Calendar() {
                   {isHead && (
                     <button
                       onClick={() => removeOverride(selectedDayOverride)}
-                      className="text-xs font-bold text-red-600 hover:bg-red-50 px-2.5 py-1 rounded-lg border border-red-200 flex items-center gap-1"
+                      className="text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 px-2.5 py-1 rounded-lg border border-red-200 dark:border-red-900 flex items-center gap-1"
                     >
                       <Trash2 size={13} /> Remove
                     </button>
                   )}
                 </div>
               ) : (
-                <p className="text-sm font-bold text-zinc-700">
+                <p className="text-sm font-bold text-zinc-700 dark:text-zinc-300">
                   {new Date(
                     Number(selectedDay.split('-')[0]),
                     Number(selectedDay.split('-')[1]) - 1,
@@ -458,9 +458,9 @@ export default function Calendar() {
             {isHead && (
               <form
                 onSubmit={submitAnnouncement}
-                className="pt-3 border-t border-zinc-100 space-y-3"
+                className="pt-3 border-t border-zinc-100 dark:border-zinc-800 space-y-3"
               >
-                <p className="text-xs font-extrabold text-zinc-900 uppercase tracking-wider flex items-center gap-1.5">
+                <p className="text-xs font-extrabold text-zinc-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
                   <Megaphone size={14} /> Announce Agency Schedule Change
                 </p>
 
@@ -470,26 +470,26 @@ export default function Calendar() {
                     onClick={() => setKind('leave_day')}
                     className={`rounded-2xl border p-3 text-left transition ${
                       kind === 'leave_day'
-                        ? 'border-violet-500 bg-violet-50 ring-1 ring-violet-400'
-                        : 'border-zinc-200 hover:border-zinc-300'
+                        ? 'border-violet-500 bg-violet-50 dark:bg-violet-950/60 ring-1 ring-violet-400'
+                        : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
                     }`}
                   >
-                    <Palmtree size={18} className="text-violet-600" />
-                    <p className="text-sm font-bold mt-1">Office Leave</p>
-                    <p className="text-[10px] text-zinc-500">Day off · auto-marked</p>
+                    <Palmtree size={18} className="text-violet-600 dark:text-violet-400" />
+                    <p className="text-sm font-bold mt-1 text-zinc-900 dark:text-white">Office Leave</p>
+                    <p className="text-[10px] text-zinc-500 dark:text-zinc-400">Day off · auto-marked</p>
                   </button>
                   <button
                     type="button"
                     onClick={() => setKind('sunday_working')}
                     className={`rounded-2xl border p-3 text-left transition ${
                       kind === 'sunday_working'
-                        ? 'border-amber-500 bg-amber-50 ring-1 ring-amber-400'
-                        : 'border-zinc-200 hover:border-zinc-300'
+                        ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/60 ring-1 ring-amber-400'
+                        : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
                     }`}
                   >
-                    <Briefcase size={18} className="text-amber-600" />
-                    <p className="text-sm font-bold mt-1">Working Sunday</p>
-                    <p className="text-[10px] text-zinc-500">Sunday counts</p>
+                    <Briefcase size={18} className="text-amber-600 dark:text-amber-400" />
+                    <p className="text-sm font-bold mt-1 text-zinc-900 dark:text-white">Working Sunday</p>
+                    <p className="text-[10px] text-zinc-500 dark:text-zinc-400">Sunday counts</p>
                   </button>
                 </div>
 
@@ -501,12 +501,12 @@ export default function Calendar() {
                       ? 'e.g. Eid Holiday — office closed'
                       : 'e.g. Product launch — full team needed'
                   }
-                  className="w-full rounded-xl border border-zinc-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                  className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100"
                 />
 
                 <button
                   disabled={busy}
-                  className="w-full rounded-xl bg-zinc-900 text-white font-bold py-3 text-sm hover:bg-zinc-800 disabled:opacity-60 transition shadow-sm"
+                  className="w-full rounded-xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-bold py-3 text-sm hover:bg-zinc-800 dark:hover:bg-zinc-200 disabled:opacity-60 transition shadow-sm"
                 >
                   {busy ? 'Announcing…' : 'Announce & Update Attendance'}
                 </button>

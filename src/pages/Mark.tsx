@@ -67,44 +67,44 @@ export default function Mark() {
     finally { setSaving(false); }
   };
 
-  if (loading) return <div className="flex justify-center py-24"><div className="animate-spin h-10 w-10 rounded-full border-4 border-zinc-200 border-t-zinc-900" /></div>;
+  if (loading) return <div className="flex justify-center py-24"><div className="animate-spin h-10 w-10 rounded-full border-4 border-zinc-200 border-t-zinc-900 dark:border-zinc-800 dark:border-t-zinc-100" /></div>;
 
   return (
-    <div className="space-y-5 max-w-5xl">
+    <div className="space-y-5 max-w-5xl text-zinc-900 dark:text-white">
       <div>
         <h1 className="font-display text-xl sm:text-2xl font-extrabold tracking-tight flex items-center gap-2"><CalendarDays size={22} /> Log Attendance</h1>
-        <p className="text-sm text-zinc-500">Mark the whole team for one day. Absences auto-send warning emails + chat alerts.</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">Mark the whole team for one day. Absences auto-send warning emails + chat alerts.</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-zinc-200 p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
-        <div className="flex items-center rounded-xl border border-zinc-200 overflow-hidden w-full sm:w-auto">
-          <button onClick={() => setDate(shiftDate(date, -1))} className="p-2.5 hover:bg-zinc-100 min-w-[44px] min-h-[44px] flex items-center justify-center"><ChevronLeft size={18} /></button>
-          <input type="date" value={date} max={todayStr()} onChange={(e) => e.target.value && setDate(e.target.value)} className="px-2 py-2 text-sm font-bold focus:outline-none flex-1 sm:flex-none" />
-          <button onClick={() => setDate(shiftDate(date, 1))} disabled={date >= todayStr()} className="p-2.5 hover:bg-zinc-100 disabled:opacity-30 min-w-[44px] min-h-[44px] flex items-center justify-center"><ChevronRight size={18} /></button>
+      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-3.5 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3">
+        <div className="flex items-center rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden w-full sm:w-auto bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white">
+          <button onClick={() => setDate(shiftDate(date, -1))} className="p-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-700 min-w-[44px] min-h-[44px] flex items-center justify-center"><ChevronLeft size={18} /></button>
+          <input type="date" value={date} max={todayStr()} onChange={(e) => e.target.value && setDate(e.target.value)} className="px-2 py-2 text-sm font-bold bg-transparent focus:outline-none flex-1 sm:flex-none" />
+          <button onClick={() => setDate(shiftDate(date, 1))} disabled={date >= todayStr()} className="p-2.5 hover:bg-zinc-100 dark:hover:bg-zinc-700 disabled:opacity-30 min-w-[44px] min-h-[44px] flex items-center justify-center"><ChevronRight size={18} /></button>
         </div>
         <p className="text-sm font-bold">{fmtDate(date)}</p>
         <div className="sm:ml-auto flex items-center gap-2 flex-wrap">
           {!counts && (
-            <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-violet-100 text-violet-700">
+            <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-violet-100 dark:bg-violet-950 text-violet-700 dark:text-violet-300">
               {isLeaveDay ? `🏖️ Announced leave (${ov?.label || 'office closed'})` : '⛱️ Sunday — auto leave'}
             </span>
           )}
-          {isSunday && ov?.kind === 'sunday_working' && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 text-amber-800">💼 Working Sunday</span>}
+          {isSunday && ov?.kind === 'sunday_working' && <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300">💼 Working Sunday</span>}
           <button onClick={() => setAll('present')} className="text-xs font-bold px-3 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">All Present</button>
-          <button onClick={() => setDate(todayStr())} className="text-xs font-bold px-3 py-2 rounded-lg border border-zinc-300 hover:bg-zinc-100">Today</button>
+          <button onClick={() => setDate(todayStr())} className="text-xs font-bold px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200">Today</button>
         </div>
       </div>
 
-      {msg && <div className="rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 text-sm font-semibold px-4 py-3">{msg}</div>}
+      {msg && <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 text-sm font-semibold px-4 py-3">{msg}</div>}
 
-      <div className="bg-white rounded-2xl border border-zinc-200 divide-y divide-zinc-100 overflow-hidden">
+      <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800 overflow-hidden">
         {employees.map((e) => (
           <div key={e.id} className="p-3.5 sm:p-4 flex flex-col md:flex-row md:items-center gap-3">
             <div className="flex items-center gap-3 md:w-64 shrink-0">
               <UserAvatar p={e} size="h-10 w-10 text-xs" />
               <div className="min-w-0">
-                <p className="text-sm font-bold truncate">{e.full_name}</p>
-                <p className="text-xs text-zinc-500 truncate">{e.designation}</p>
+                <p className="text-sm font-bold truncate text-zinc-900 dark:text-white">{e.full_name}</p>
+                <p className="text-xs text-zinc-500 dark:text-zinc-400 truncate">{e.designation}</p>
               </div>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -113,23 +113,23 @@ export default function Mark() {
                 const active = sel[e.id] === st;
                 return (
                   <button key={st} onClick={() => setSel((s) => ({ ...s, [e.id]: st }))}
-                    className={`text-xs font-bold px-3.5 py-2.5 rounded-xl border transition min-h-[40px] ${active ? meta.cell + ' border-transparent shadow' : 'border-zinc-200 text-zinc-600 hover:border-zinc-400'}`}>
+                    className={`text-xs font-bold px-3.5 py-2.5 rounded-xl border transition min-h-[40px] ${active ? meta.cell + ' border-transparent shadow' : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:border-zinc-400 dark:hover:border-zinc-500'}`}>
                     {meta.label}
                   </button>
                 );
               })}
             </div>
             <input value={notes[e.id] || ''} onChange={(ev) => setNotes((n) => ({ ...n, [e.id]: ev.target.value }))} placeholder="Note (optional)"
-              className="md:ml-auto md:w-52 rounded-xl border border-zinc-200 px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-zinc-900" />
+              className="md:ml-auto md:w-52 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100" />
           </div>
         ))}
       </div>
 
-      <button onClick={save} disabled={saving} className="w-full rounded-2xl bg-zinc-900 text-white font-bold py-4 text-sm hover:bg-zinc-700 transition flex items-center justify-center gap-2 disabled:opacity-60">
+      <button onClick={save} disabled={saving} className="w-full rounded-2xl bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-bold py-4 text-sm hover:bg-zinc-700 dark:hover:bg-zinc-200 transition flex items-center justify-center gap-2 disabled:opacity-60">
         {saving ? <span className="animate-spin h-4 w-4 rounded-full border-2 border-white/40 border-t-white" /> : <Send size={17} />}
         {saving ? 'Saving…' : `Save Attendance for ${fmtDate(date)}`}
       </button>
-      <p className="text-xs text-zinc-500 flex items-center gap-1.5"><CheckCircle2 size={13} /> Every new "Absent" marking instantly emails the employee (full name + score) and posts a chat warning.</p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5"><CheckCircle2 size={13} /> Every new "Absent" marking instantly emails the employee (full name + score) and posts a chat warning.</p>
     </div>
   );
 }

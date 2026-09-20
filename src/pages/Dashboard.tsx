@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   CalendarCheck2, UserCheck, UserX, Plane, ChevronRight, TrendingUp,
-  MessagesSquare, ClipboardList, Megaphone, Flame, Award, Clock,
+  MessagesSquare, ClipboardList, Megaphone, Flame, Award, Clock, Bell,
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
