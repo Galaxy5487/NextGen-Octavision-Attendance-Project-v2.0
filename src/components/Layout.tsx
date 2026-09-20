@@ -231,7 +231,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Mobile bottom navigation */}
-      <nav className="fixed bottom-0 inset-x-0 z-30 lg:hidden bg-white/95 backdrop-blur border-t border-zinc-200 pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed bottom-0 inset-x-0 z-30 lg:hidden bg-white/95 dark:bg-zinc-900/95 backdrop-blur border-t border-zinc-200 dark:border-zinc-800 pb-[env(safe-area-inset-bottom)]">
         <div className="grid grid-cols-5">
           {[
             { to: '/app', label: 'Home', icon: LayoutDashboard, end: true },
@@ -242,14 +242,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             const active = i.end ? loc.pathname === '/app' : loc.pathname.startsWith(i.to);
             const Icon = i.icon;
             return (
-              <Link key={i.to} to={i.to} className={`relative flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-bold ${active ? 'text-zinc-900' : 'text-zinc-400'}`}>
-                {active && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-zinc-900" />}
+              <Link key={i.to} to={i.to} className={`relative flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-bold ${active ? 'text-zinc-900 dark:text-white' : 'text-zinc-500 dark:text-zinc-400'}`}>
+                {active && <span className="absolute top-0 h-0.5 w-8 rounded-full bg-zinc-900 dark:bg-white" />}
                 <Icon size={20} strokeWidth={2.2} />
                 {i.label}
               </Link>
             );
           })}
-          <button onClick={() => setOpen(true)} className="relative flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-bold text-zinc-400">
+          <button onClick={() => setOpen(true)} className="relative flex flex-col items-center gap-0.5 py-2.5 text-[10px] font-bold text-zinc-500 dark:text-zinc-400">
             <Menu size={20} strokeWidth={2.2} />
             More
             {unread > 0 && <span className="absolute top-1.5 right-1/2 translate-x-5 h-2 w-2 rounded-full bg-red-500" />}
