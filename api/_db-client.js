@@ -29,6 +29,7 @@ function loadEnv() {
 loadEnv();
 
 const DEFAULT_SUPABASE_URL = 'https://kztsphgwobudettagemb.supabase.co';
+const DEFAULT_SUPABASE_KEY = 'sb_publishable_qyzo1R4zewhnNlZ2MrVb1w_F-KLiwR5';
 
 let clientInstance = null;
 
@@ -36,11 +37,7 @@ function getClient() {
   if (!clientInstance) {
     loadEnv();
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
-    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY;
-
-    if (!key) {
-      throw new Error('Supabase key missing. Please set SUPABASE_SERVICE_ROLE_KEY or VITE_SUPABASE_ANON_KEY in environment or .env.local.');
-    }
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_KEY;
 
     clientInstance = createClient(url, key, {
       global: {
@@ -65,5 +62,6 @@ const supabase = new Proxy({}, {
 
 export { supabase };
 export default supabase;
+
 
 

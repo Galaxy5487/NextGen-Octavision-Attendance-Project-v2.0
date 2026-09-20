@@ -2,7 +2,13 @@
   command = "npm run build"
   publish = "dist"
   functions = "api"
-  environment = { SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_ANON_KEY,VITE_SUPABASE_ANON_KEY" }
+
+[build.environment]
+  NEXT_PUBLIC_SUPABASE_URL = "https://kztsphgwobudettagemb.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_qyzo1R4zewhnNlZ2MrVb1w_F-KLiwR5"
+  VITE_SUPABASE_URL = "https://kztsphgwobudettagemb.supabase.co"
+  VITE_SUPABASE_ANON_KEY = "sb_publishable_qyzo1R4zewhnNlZ2MrVb1w_F-KLiwR5"
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_ANON_KEY,VITE_SUPABASE_ANON_KEY"
 
 [functions]
   node_bundler = "esbuild"
@@ -18,4 +24,5 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
 
