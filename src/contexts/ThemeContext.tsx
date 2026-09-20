@@ -40,11 +40,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       const saved = localStorage.getItem('ngo_theme_mode');
       if (saved === 'dark' || saved === 'light') return saved;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      return 'light';
     } catch {
       return 'light';
     }
   });
+
 
   const [palette, setPaletteState] = useState<ThemePalette>(() => {
     try {
