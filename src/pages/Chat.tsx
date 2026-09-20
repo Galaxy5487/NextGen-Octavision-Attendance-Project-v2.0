@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Users, User, Plus, AlertTriangle, X, Trash2, Pencil, Search, MessageSquarePlus, Crown, Shield, Eraser } from 'lucide-react';
+import { Send, Users, User, Plus, AlertTriangle, X, Trash2, Pencil, Search, MessageSquarePlus, Crown, Shield, Eraser, MoreVertical } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../lib/api';
 import type { Thread, Message, Profile } from '../lib/types';
@@ -27,7 +27,9 @@ export default function Chat() {
   const [mobileList, setMobileList] = useState(true);
   const [searchContact, setSearchContact] = useState('');
   const [searchThread, setSearchThread] = useState('');
+  const [showMenu, setShowMenu] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+
 
   const loadThreads = async () => {
     try {
@@ -66,11 +68,13 @@ export default function Chat() {
   };
 
   useEffect(() => {
+    setShowMenu(false);
     if (!active) return;
     loadMsgs(active);
     const timer = setInterval(() => loadMsgs(active), 3500);
     return () => clearInterval(timer);
   }, [active]);
+
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -347,13 +351,13 @@ export default function Chat() {
                     deleteThread(t.id);
                   }}
                   title="Remove / Delete conversation contact"
-                  className={`opacity-0 group-hover/item:opacity-100 p-1.5 rounded-lg transition shrink-0 ${
+                  className={`p-1.5 rounded-lg transition shrink-0 ${
                     active === t.id
                       ? 'text-zinc-400 hover:text-red-400 hover:bg-white/10'
                       : 'text-zinc-400 hover:text-red-600 hover:bg-red-50'
                   }`}
                 >
-                  <Trash2 size={14} />
+                  <Trash2 size={16} />
                 </button>
               </div>
             ))}
@@ -406,25 +410,51 @@ export default function Chat() {
                       : 'Direct message'}
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  {msgs.length > 0 && (
-                    <button
-                      onClick={clearChat}
-                      title="Clear Chat Messages"
-                      className="flex items-center gap-1.5 text-xs font-bold text-zinc-500 hover:text-red-600 hover:bg-red-50 px-2.5 py-1.5 rounded-lg border border-zinc-200 transition"
-                    >
-                      <Eraser size={14} /> Clear Chat
-                    </button>
-                  )}
+                {/* 3-dots Menu Dropdown */}
+                <div className="relative">
                   <button
-                    onClick={() => deleteThread(activeThread.id)}
-                    title="Remove / Delete Contact Conversation"
-                    className="flex items-center gap-1.5 text-xs font-bold text-zinc-500 hover:text-red-600 hover:bg-red-50 px-2.5 py-1.5 rounded-lg border border-zinc-200 transition"
+                    onClick={() => setShowMenu((s) => !s)}
+                    title="Chat Options"
+                    className="p-2 rounded-xl text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200/70 border border-zinc-200 bg-white transition flex items-center justify-center"
                   >
-                    <Trash2 size={14} /> Remove Contact
+                    <MoreVertical size={18} />
                   </button>
+
+                  {showMenu && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setShowMenu(false)}
+                      />
+                      <div className="absolute right-0 top-full mt-1.5 w-48 bg-white rounded-2xl shadow-xl border border-zinc-200 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 overflow-hidden">
+                        {msgs.length > 0 && (
+                          <button
+                            onClick={() => {
+                              setShowMenu(false);
+                              clearChat();
+                            }}
+                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-zinc-700 hover:bg-zinc-100 transition text-left"
+                          >
+                            <Eraser size={15} className="text-zinc-500" />
+                            Clear Chat
+                          </button>
+                        )}
+                        <button
+                          onClick={() => {
+                            setShowMenu(false);
+                            deleteThread(activeThread.id);
+                          }}
+                          className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition text-left"
+                        >
+                          <Trash2 size={15} className="text-red-500" />
+                          Remove Contact
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
+
               <div className="flex-1 overflow-y-auto scroll-thin p-4 sm:p-5 space-y-3 bg-[#fafafa]">
                 {msgs.map((m) => {
                   const mine = String(m.sender_id) === String(user?.id);
