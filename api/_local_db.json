@@ -1,0 +1,25 @@
+{
+  "profiles": [
+    {
+      "id": 1,
+      "full_name": "Team Head",
+      "email": "nextgenoctavision@gmail.com",
+      "password": "Head@26",
+      "role": "head",
+      "designation": "Team Head",
+      "phone": "",
+      "avatar_color": "#18181b",
+      "active": true
+    }
+  ],
+  "attendance": [],
+  "tasks": [],
+  "leaves": [],
+  "calendar_overrides": [],
+  "announcements": [],
+  "warning_logs": [],
+  "threads": [],
+  "messages": [],
+  "notifications": [],
+  "profile_photos": []
+}

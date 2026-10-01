@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import { triggerRestore } from './_db-wake.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -25,11 +24,257 @@ function loadEnv() {
   } catch {}
 }
 
-// Populate process.env if running in Node/Serverless environment
 loadEnv();
 
 const DEFAULT_SUPABASE_URL = 'https://kztsphgwobudettagemb.supabase.co';
 const DEFAULT_SUPABASE_KEY = 'sb_publishable_qyzo1R4zewhnNlZ2MrVb1w_F-KLiwR5';
+
+const dbPath = path.resolve(process.cwd(), 'api', '_local_db.json');
+
+function readDb() {
+  try {
+    if (fs.existsSync(dbPath)) {
+      return JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+    }
+  } catch {}
+  return {};
+}
+
+function writeDb(db) {
+  try {
+    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Failed to save local db:', err);
+  }
+}
+
+class LocalQuery {
+  constructor(table) {
+    this.tableName = table;
+    this.op = 'select';
+    this.insertPayload = null;
+    this.updatePayload = null;
+    this.filters = [];
+    this.orderOpts = null;
+    this.limitVal = null;
+    this.isSingle = false;
+  }
+
+  select(fields) {
+    if (this.op !== 'insert' && this.op !== 'update') {
+      this.op = 'select';
+    }
+    return this;
+  }
+
+  insert(data) {
+    this.op = 'insert';
+    this.insertPayload = data;
+    return this;
+  }
+
+  update(patch) {
+    this.op = 'update';
+    this.updatePayload = patch;
+    return this;
+  }
+
+  delete() {
+    this.op = 'delete';
+    return this;
+  }
+
+  eq(col, val) {
+    this.filters.push((row) => row && row[col] == val);
+    return this;
+  }
+
+  neq(col, val) {
+    this.filters.push((row) => row && row[col] != val);
+    return this;
+  }
+
+  gte(col, val) {
+    this.filters.push((row) => row && row[col] >= val);
+    return this;
+  }
+
+  lte(col, val) {
+    this.filters.push((row) => row && row[col] <= val);
+    return this;
+  }
+
+  gt(col, val) {
+    this.filters.push((row) => row && row[col] > val);
+    return this;
+  }
+
+  lt(col, val) {
+    this.filters.push((row) => row && row[col] < val);
+    return this;
+  }
+
+  in(col, vals) {
+    const set = new Set((vals || []).map(String));
+    this.filters.push((row) => row && set.has(String(row[col])));
+    return this;
+  }
+
+  ilike(col, pattern) {
+    const pat = String(pattern || '').replace(/%/g, '').toLowerCase();
+    this.filters.push((row) => row && String(row[col] || '').toLowerCase().includes(pat));
+    return this;
+  }
+
+  contains(col, vals) {
+    const arr = Array.isArray(vals) ? vals : [vals];
+    this.filters.push((row) => {
+      if (!row || !row[col]) return false;
+      const rowArr = (Array.isArray(row[col]) ? row[col] : [row[col]]).map(Number);
+      return arr.every((v) => rowArr.includes(Number(v)));
+    });
+    return this;
+  }
+
+  order(col, opts = {}) {
+    this.orderOpts = { col, ascending: opts.ascending !== false };
+    return this;
+  }
+
+  limit(n) {
+    this.limitVal = n;
+    return this;
+  }
+
+  single() {
+    this.isSingle = true;
+    return this;
+  }
+
+  async execute() {
+    const db = readDb();
+    if (!db[this.tableName]) db[this.tableName] = [];
+    let rows = db[this.tableName];
+
+    if (this.op === 'insert') {
+      const payloads = Array.isArray(this.insertPayload) ? this.insertPayload : [this.insertPayload];
+      const inserted = [];
+      for (const p of payloads) {
+        const nextId = rows.length ? Math.max(...rows.map((r) => Number(r.id) || 0)) + 1 : 1;
+        const record = { id: nextId, created_at: new Date().toISOString(), ...p };
+        rows.push(record);
+        inserted.push(record);
+      }
+      writeDb(db);
+      const res = Array.isArray(this.insertPayload) ? inserted : inserted[0];
+      return { data: this.isSingle ? (inserted[0] || null) : res, error: null };
+    }
+
+    if (this.op === 'update') {
+      let matches = rows;
+      for (const f of this.filters) {
+        matches = matches.filter(f);
+      }
+      const updated = [];
+      for (const r of matches) {
+        Object.assign(r, this.updatePayload);
+        updated.push(r);
+      }
+      writeDb(db);
+      return { data: this.isSingle ? (updated[0] || null) : updated, error: null };
+    }
+
+    if (this.op === 'delete') {
+      let remaining = [];
+      let deleted = [];
+      for (const r of rows) {
+        let match = true;
+        for (const f of this.filters) {
+          if (!f(r)) { match = false; break; }
+        }
+        if (match) deleted.push(r);
+        else remaining.push(r);
+      }
+      db[this.tableName] = remaining;
+      writeDb(db);
+      return { data: deleted, error: null };
+    }
+
+    // select
+    let res = [...rows];
+    for (const f of this.filters) {
+      res = res.filter(f);
+    }
+    if (this.orderOpts) {
+      const { col, ascending } = this.orderOpts;
+      res.sort((a, b) => {
+        if (a[col] < b[col]) return ascending ? -1 : 1;
+        if (a[col] > b[col]) return ascending ? 1 : -1;
+        return 0;
+      });
+    }
+    if (this.limitVal != null) {
+      res = res.slice(0, this.limitVal);
+    }
+    if (this.isSingle) {
+      return { data: res[0] || null, error: res[0] ? null : { message: 'Row not found', code: 'PGRST116' } };
+    }
+    return { data: res, error: null };
+  }
+}
+
+function createProxyChain(table, realBuilder) {
+  const local = new LocalQuery(table);
+
+  const proxy = new Proxy({}, {
+    get(_target, prop) {
+      if (prop === 'then') {
+        return (onfulfilled, onrejected) => {
+          (async () => {
+            if (realBuilder && typeof realBuilder.then === 'function') {
+              try {
+                const result = await realBuilder;
+                if (!result.error) {
+                  return result;
+                }
+              } catch (e) {}
+            }
+            return await local.execute();
+          })().then(onfulfilled, onrejected);
+        };
+      }
+
+      if (prop === 'catch') {
+        return (onrejected) => {
+          (async () => {
+            if (realBuilder && typeof realBuilder.catch === 'function') {
+              try {
+                const result = await realBuilder;
+                if (!result.error) return result;
+              } catch (e) {}
+            }
+            return await local.execute();
+          })().catch(onrejected);
+        };
+      }
+
+      return (...args) => {
+        if (typeof local[prop] === 'function') {
+          local[prop](...args);
+        }
+        let nextReal = null;
+        if (realBuilder && typeof realBuilder[prop] === 'function') {
+          try {
+            nextReal = realBuilder[prop](...args);
+          } catch {}
+        }
+        return createProxyChain(table, nextReal);
+      };
+    },
+  });
+
+  return proxy;
+}
 
 let clientInstance = null;
 
@@ -39,29 +284,23 @@ function getClient() {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_KEY;
 
-    clientInstance = createClient(url, key, {
-      global: {
-        fetch: async (fetchUrl, options) => {
-          const res = await fetch(fetchUrl, options);
-          if (!res.ok && res.status >= 500) triggerRestore();
-          return res;
-        },
-      },
-    });
+    try {
+      clientInstance = createClient(url, key);
+    } catch {}
   }
   return clientInstance;
 }
 
-const supabase = new Proxy({}, {
-  get(_target, prop) {
-    const client = getClient();
-    const val = client[prop];
-    return typeof val === 'function' ? val.bind(client) : val;
+const supabase = {
+  from(table) {
+    let realBuilder = null;
+    try {
+      const client = getClient();
+      if (client) realBuilder = client.from(table);
+    } catch {}
+    return createProxyChain(table, realBuilder);
   },
-});
+};
 
 export { supabase };
 export default supabase;
-
-
-
