@@ -21,14 +21,10 @@ export async function mainHandler(req, res) {
     }
     if (req.method === 'POST') {
       const { full_name, email, password, designation, phone, role } = req.body || {};
-      if (!full_name || !email || !password) return res.status(400).json({ error: 'Full name, email and password are required' });
-      const em = String(email).trim().toLowerCase();
+      if (!full_name || !password) return res.status(400).json({ error: 'Full name and password are required' });
+      const em = String(email || 'octavisionteam@gmail.com').trim().toLowerCase();
       const norm = (s) => String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
       if ((role || 'employee') === 'employee') {
-        // All employees share the same login email; Full Name separates users
-        if (em !== 'octavisionteam@gmail.com') {
-          return res.status(400).json({ error: 'Employee email must be octavisionteam@gmail.com' });
-        }
         const { data: sameName } = await supabase.from('profiles').select('id,full_name').eq('role', 'employee');
         if ((sameName || []).some((r) => norm(r.full_name) === norm(full_name))) {
           return res.status(400).json({ error: 'An employee with this full name already exists' });
@@ -39,7 +35,7 @@ export async function mainHandler(req, res) {
       }
       const colors = ['#18181b', '#3f3f46', '#713f12', '#14532d', '#1e3a8a', '#581c87', '#7c2d12', '#0f766e'];
       const { data, error } = await supabase.from('profiles').insert({
-        full_name, email: em, password,
+        full_name: full_name.trim(), email: em, password,
         designation: designation || 'Team Member', phone: phone || '',
         role: role || 'employee', avatar_color: colors[Math.floor(Math.random() * colors.length)], active: true,
       }).select().single();
@@ -72,8 +68,10 @@ export async function mainHandler(req, res) {
     if (req.method === 'DELETE') {
       const { id } = req.body || {};
       if (!id) return res.status(400).json({ error: 'id required' });
-      const { error } = await supabase.from('profiles').update({ active: false }).eq('id', id);
-      if (error) throw error;
+      const { error } = await supabase.from('profiles').delete().eq('id', id);
+      if (error) {
+        await supabase.from('profiles').update({ active: false }).eq('id', id);
+      }
       return res.status(200).json({ ok: true });
     }
     return res.status(405).json({ error: 'Method not allowed' });

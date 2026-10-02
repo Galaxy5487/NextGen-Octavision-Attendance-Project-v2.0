@@ -26,3 +26,6 @@ dist-ssr
 .vite-source-tags.js
 .vercel
 scratch/
+_local_db.json
+api/_local_db.json
+

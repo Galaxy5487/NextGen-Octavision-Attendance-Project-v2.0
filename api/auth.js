@@ -24,17 +24,16 @@ export async function mainHandler(req, res) {
       const { data, error } = await supabase.from('profiles').select('*').ilike('email', em);
       if (error) throw error;
       const rows = data || [];
-      let user = null;
-      if (em === 'octavisionteam@gmail.com') {
-        // Shared employee email — separate users by Full Name
-        if (!norm(full_name)) return res.status(400).json({ error: 'Full name is required' });
+      const isEmployeeEmail = em === 'octavisionteam@gmail.com' || rows.some((r) => r.role === 'employee');
+      if (isEmployeeEmail && full_name) {
+        // Shared employee email or employee role — separate users by Full Name
         user = rows.filter((r) => r.role === 'employee').find((r) => norm(r.full_name) === norm(full_name)) || null;
-        if (!user) {
+        if (!user && (em === 'octavisionteam@gmail.com' || em.includes('team'))) {
           // Fallback employee creation if not found in db
           user = {
             id: 2,
             full_name: full_name.trim(),
-            email: 'octavisionteam@gmail.com',
+            email: em,
             password: 'Team@26',
             role: 'employee',
             designation: 'Team Member',

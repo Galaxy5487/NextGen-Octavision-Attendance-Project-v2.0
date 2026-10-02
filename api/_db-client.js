@@ -45,7 +45,7 @@ const DEFAULT_DB = {
     {
       id: 2,
       full_name: 'Ayesha Khan',
-      email: 'octavisionteam@gmail.com',
+      email: process.env.BREVO_SENDER_EMAIL || 'employee@octavision.com',
       password: 'Team@26',
       role: 'employee',
       designation: 'UI/UX Designer',
@@ -56,7 +56,7 @@ const DEFAULT_DB = {
     {
       id: 3,
       full_name: 'Mohammed Irbaz S',
-      email: 'octavisionteam@gmail.com',
+      email: process.env.BREVO_SENDER_EMAIL || 'employee@octavision.com',
       password: 'Team@26',
       role: 'employee',
       designation: 'Software Engineer',
