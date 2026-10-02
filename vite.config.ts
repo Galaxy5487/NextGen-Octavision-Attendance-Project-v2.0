@@ -109,11 +109,15 @@ function apiDevServerPlugin(): Plugin {
 // https://vite.dev/config/
 export default defineConfig(async ({ mode }) => {
   const plugins: any[] = [react(), tailwindcss(), apiDevServerPlugin()];
-  try {
-    // @ts-ignore
-    const m = await import('./.vite-source-tags.js');
-    plugins.push(m.sourceTags());
-  } catch {}
+  if (fs.existsSync(path.resolve(process.cwd(), '.vite-source-tags.js'))) {
+    try {
+      // @ts-ignore
+      const m = await import('./.vite-source-tags.js');
+      if (m && typeof m.sourceTags === 'function') {
+        plugins.push(m.sourceTags());
+      }
+    } catch {}
+  }
 
   const env = loadEnv(mode, process.cwd(), ['VITE_', 'NEXT_PUBLIC_']);
   const processEnvDefines: Record<string, string> = {};

@@ -53,6 +53,7 @@ export async function mainHandler(req, res) {
   }
 }
 
-export default mainHandler;
+export default netlifyAdapter(mainHandler);
 export const handler = netlifyAdapter(mainHandler);
+
 
