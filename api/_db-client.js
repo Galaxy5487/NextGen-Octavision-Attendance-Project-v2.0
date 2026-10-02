@@ -52,6 +52,17 @@ const DEFAULT_DB = {
       phone: '',
       avatar_color: '#3f3f46',
       active: true
+    },
+    {
+      id: 3,
+      full_name: 'Mohammed Irbaz S',
+      email: 'octavisionteam@gmail.com',
+      password: 'Team@26',
+      role: 'employee',
+      designation: 'Software Engineer',
+      phone: '',
+      avatar_color: '#1e3a8a',
+      active: true
     }
   ],
   attendance: [],
