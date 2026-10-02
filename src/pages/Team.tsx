@@ -37,7 +37,7 @@ export default function Team() {
       if (editing) {
         await api('/api/employees', { method: 'PUT', body: { id: editing.id, full_name: form.full_name.trim(), designation: form.designation.trim(), phone: form.phone.trim(), password: form.password || undefined } });
       } else {
-        await api('/api/employees', { method: 'POST', body: { full_name: form.full_name.trim(), email: 'octavisionteam@gmail.com', password: form.password || 'Team@26', designation: form.designation.trim(), phone: form.phone.trim(), role: 'employee' } });
+        await api('/api/employees', { method: 'POST', body: { full_name: form.full_name.trim(), email: form.email.trim() || 'octavisionteam@gmail.com', password: form.password || 'Team@26', designation: form.designation.trim(), phone: form.phone.trim(), role: 'employee' } });
       }
       setShow(false); load();
     } catch (e: any) { setErr(e.message); }
@@ -111,7 +111,7 @@ export default function Team() {
             {err && <p className="mt-3 text-sm font-semibold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-xl px-4 py-2.5">{err}</p>}
             <div className="space-y-3 mt-4">
               <input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} placeholder="Full name * (must be unique — used at login)" className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100" />
-              {!editing && <input value="octavisionteam@gmail.com" disabled className="w-full rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/40 px-4 py-2.5 text-sm text-zinc-500 dark:text-zinc-400" />}
+              <input value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="Email (default: octavisionteam@gmail.com)" className="w-full rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100" />
               <div className="grid grid-cols-2 gap-2">
                 <input value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} placeholder={editing ? 'New password (blank = keep)' : 'Password'} className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100" />
                 <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Phone" className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 dark:focus:ring-zinc-100" />

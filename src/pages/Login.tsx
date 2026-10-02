@@ -95,9 +95,8 @@ export default function Login() {
               <label className="text-xs font-bold text-zinc-600 uppercase tracking-wider">Email</label>
               <div className="mt-1.5 relative">
                 <Mail size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@octavision…"
-                  readOnly={role === 'employee'}
-                  className={`w-full rounded-xl border border-zinc-300 pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition ${role === 'employee' ? 'bg-zinc-50 text-zinc-600' : ''}`} />
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@octavision.com"
+                  className="w-full rounded-xl border border-zinc-300 pl-10 pr-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition" />
               </div>
             </div>
             <div>
