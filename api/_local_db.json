@@ -10,6 +10,17 @@
       "phone": "",
       "avatar_color": "#18181b",
       "active": true
+    },
+    {
+      "id": 2,
+      "full_name": "Ayesha Khan",
+      "email": "octavisionteam@gmail.com",
+      "password": "Team@26",
+      "role": "employee",
+      "designation": "UI/UX Designer",
+      "phone": "",
+      "avatar_color": "#3f3f46",
+      "active": true
     }
   ],
   "attendance": [],

@@ -29,20 +29,88 @@ loadEnv();
 const DEFAULT_SUPABASE_URL = 'https://kztsphgwobudettagemb.supabase.co';
 const DEFAULT_SUPABASE_KEY = 'sb_publishable_qyzo1R4zewhnNlZ2MrVb1w_F-KLiwR5';
 
-const dbPath = path.resolve(process.cwd(), 'api', '_local_db.json');
+const DEFAULT_DB = {
+  profiles: [
+    {
+      id: 1,
+      full_name: 'Team Head',
+      email: 'nextgenoctavision@gmail.com',
+      password: 'Head@26',
+      role: 'head',
+      designation: 'Team Head',
+      phone: '',
+      avatar_color: '#18181b',
+      active: true
+    },
+    {
+      id: 2,
+      full_name: 'Ayesha Khan',
+      email: 'octavisionteam@gmail.com',
+      password: 'Team@26',
+      role: 'employee',
+      designation: 'UI/UX Designer',
+      phone: '',
+      avatar_color: '#3f3f46',
+      active: true
+    }
+  ],
+  attendance: [],
+  tasks: [],
+  leaves: [],
+  calendar_overrides: [],
+  announcements: [],
+  warning_logs: [],
+  threads: [],
+  messages: [],
+  notifications: [],
+  profile_photos: []
+};
+
+function getPossibleDbPaths() {
+  const paths = [
+    path.resolve(process.cwd(), 'api', '_local_db.json'),
+    path.resolve(process.cwd(), '_local_db.json'),
+    path.resolve('/tmp', '_local_db.json')
+  ];
+  try {
+    if (typeof __dirname !== 'undefined') {
+      paths.push(path.resolve(__dirname, '_local_db.json'));
+      paths.push(path.resolve(__dirname, '..', 'api', '_local_db.json'));
+    }
+  } catch {}
+  return paths;
+}
 
 function readDb() {
   try {
-    if (fs.existsSync(dbPath)) {
-      return JSON.parse(fs.readFileSync(dbPath, 'utf-8'));
+    for (const p of getPossibleDbPaths()) {
+      if (fs.existsSync(p)) {
+        const content = fs.readFileSync(p, 'utf-8');
+        if (content) {
+          const parsed = JSON.parse(content);
+          if (parsed && Array.isArray(parsed.profiles)) {
+            if (parsed.profiles.length === 0) {
+              parsed.profiles = JSON.parse(JSON.stringify(DEFAULT_DB.profiles));
+            }
+            return parsed;
+          }
+        }
+      }
     }
   } catch {}
-  return {};
+  return JSON.parse(JSON.stringify(DEFAULT_DB));
 }
 
 function writeDb(db) {
   try {
-    fs.writeFileSync(dbPath, JSON.stringify(db, null, 2), 'utf-8');
+    for (const p of getPossibleDbPaths()) {
+      try {
+        const dir = path.dirname(p);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(p, JSON.stringify(db, null, 2), 'utf-8');
+        return;
+      } catch {}
+    }
   } catch (err) {
     console.error('Failed to save local db:', err);
   }
